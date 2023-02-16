@@ -1,11 +1,18 @@
 package com.nahid.flow_with_retrofit.network
 
+import com.nahid.flow_with_retrofit.model.GetPostModel
 import com.nahid.flow_with_retrofit.model.PostModel
 import kotlinx.coroutines.flow.StateFlow
 
 interface AppListener {
 
-    fun post(): StateFlow<NetworkResponse<List<PostModel>>>
+    interface GetPost {
+        fun getPost(): StateFlow<NetworkResponse<List<GetPostModel>>>
 
-    suspend fun requestPost()
+        suspend fun requestGetPost()
+    }
+
+    interface RequestPost {
+       suspend fun requestPost(postModel: PostModel)
+    }
 }

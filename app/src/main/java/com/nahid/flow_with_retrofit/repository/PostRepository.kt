@@ -6,36 +6,30 @@ import com.nahid.flow_with_retrofit.network.ApiService
 import com.nahid.flow_with_retrofit.network.AppListener
 import com.nahid.flow_with_retrofit.network.NetworkResponse
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class PostRepository(private val apiService: ApiService) : AppListener {
+class PostRepository(private val apiService: ApiService) : AppListener.RequestPost {
+    private val postFlow = MutableStateFlow<NetworkResponse<Boolean>>(NetworkResponse.Empty())
 
-    private var postFlow =
-        MutableStateFlow<NetworkResponse<List<PostModel>>>(NetworkResponse.Empty())
+    val postResponse = postFlow.asStateFlow()
+    override suspend fun requestPost(postModel: PostModel) {
 
-    override fun post(): StateFlow<NetworkResponse<List<PostModel>>> {
-        return postFlow.asStateFlow()
-    }
-
-    override suspend fun requestPost() {
         postFlow.emit(NetworkResponse.Loading())
-
         try {
-            val response = apiService.getPost()
+            val response = apiService.addPost(postModel)
             if (response.isSuccessful) {
-                if (response.body() != null) {
-                    postFlow.emit(NetworkResponse.Success(response.body()!!))
-                } else {
-                    postFlow.emit(NetworkResponse.Error("Not data Found"))
-                }
+                postFlow.emit(NetworkResponse.Success(true))
+                Log.d("TAG", "requestPost success: ")
             } else {
-                postFlow.emit(NetworkResponse.Error("Not data Found"))
+                Log.d("TAG", "requestPost Failed: ")
+                postFlow.emit(NetworkResponse.Error("Post Failed!!"))
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            Log.d("TAG", "requestPost FailedC: ")
             postFlow.emit(NetworkResponse.Error(e.message.toString()))
         }
     }
+
 
 }

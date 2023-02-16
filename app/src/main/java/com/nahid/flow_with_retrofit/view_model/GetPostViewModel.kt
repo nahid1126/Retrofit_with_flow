@@ -3,30 +3,29 @@ package com.nahid.flow_with_retrofit.view_model
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.nahid.flow_with_retrofit.model.GetPostModel
-import com.nahid.flow_with_retrofit.model.PostModel
 import com.nahid.flow_with_retrofit.network.ApiClient
 import com.nahid.flow_with_retrofit.network.ApiService
 import com.nahid.flow_with_retrofit.network.BaseUrl
-import com.nahid.flow_with_retrofit.repository.PostRepository
+import com.nahid.flow_with_retrofit.repository.GetPostRepository
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class PostViewModel(application: Application) : AndroidViewModel(application) {
-    private val postRepository: PostRepository
+class GetPostViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val getPostRepository: GetPostRepository
 
     init {
         val apiService = ApiClient.getApiClient(BaseUrl.baseUrl)!!.create(ApiService::class.java)
-        postRepository = PostRepository(apiService)
+        getPostRepository = GetPostRepository(apiService)
     }
 
-    fun addPost() = postRepository.postResponse
+    val postList = getPostRepository.getPost()
 
-    fun postRequest(postModel: PostModel) {
+    fun requestPostList() {
         viewModelScope.launch {
             withContext(IO) {
-                postRepository.requestPost(postModel)
+                getPostRepository.requestGetPost()
             }
         }
     }

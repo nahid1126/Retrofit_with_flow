@@ -11,7 +11,7 @@ import com.nahid.flow_with_retrofit.databinding.ActivityMainBinding
 import com.nahid.flow_with_retrofit.network.NetworkConnect
 import com.nahid.flow_with_retrofit.network.NetworkResponse
 import com.nahid.flow_with_retrofit.view.adapter.PostAdapter
-import com.nahid.flow_with_retrofit.view_model.PostViewModel
+import com.nahid.flow_with_retrofit.view_model.GetPostViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 private const val TAG = "MainActivity"
@@ -19,10 +19,9 @@ private const val TAG = "MainActivity"
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var postViewModel: PostViewModel
+    private lateinit var getPostViewModel: GetPostViewModel
     private lateinit var postAdapter: PostAdapter
     private lateinit var progressDialog: ProgressDialog
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -35,10 +34,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         postAdapter = PostAdapter()
-        postViewModel = ViewModelProvider(this)[PostViewModel::class.java]
+        getPostViewModel = ViewModelProvider(this)[GetPostViewModel::class.java]
 
         if (NetworkConnect.isNetworkConnected(this)) {
-            postViewModel.requestPostList()
+            getPostViewModel.requestPostList()
         } else {
             Toast.makeText(this, "Connect Internet", Toast.LENGTH_SHORT).show()
         }
@@ -50,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launchWhenCreated {
-            postViewModel.postList.collectLatest {
+            getPostViewModel.postList.collectLatest {
                 when (it) {
                     is NetworkResponse.Loading -> {
                         progressDialog.show()
@@ -71,6 +70,11 @@ class MainActivity : AppCompatActivity() {
                     else -> {}
                 }
             }
+        }
+
+        binding.setOnFabClick {
+            CustomFragment().show(supportFragmentManager, "My  Fragment");
+            Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show()
         }
 
     }

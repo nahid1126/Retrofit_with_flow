@@ -4,11 +4,11 @@
 
     <data>
 
-        <import type="com.nahid.flow_with_retrofit.model.PostModel" />
+        <import type="com.nahid.flow_with_retrofit.model.GetPostModel" />
 
         <variable
             name="postValue"
-            type="PostModel" />
+            type="GetPostModel" />
     </data>
 
     <androidx.cardview.widget.CardView
