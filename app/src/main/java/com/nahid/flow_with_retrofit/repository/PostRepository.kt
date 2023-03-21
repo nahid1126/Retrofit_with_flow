@@ -6,19 +6,22 @@ import com.nahid.flow_with_retrofit.network.ApiService
 import com.nahid.flow_with_retrofit.network.AppListener
 import com.nahid.flow_with_retrofit.network.NetworkResponse
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class PostRepository(private val apiService: ApiService) : AppListener.RequestPost {
-    private val postFlow = MutableStateFlow<NetworkResponse<Boolean>>(NetworkResponse.Empty())
+    private val postFlow = MutableStateFlow<NetworkResponse<PostModel>>(NetworkResponse.Empty())
+    override fun getPostResponse(): StateFlow<NetworkResponse<PostModel>> {
+        return postFlow.asStateFlow()
+    }
 
-    val postResponse = postFlow.asStateFlow()
     override suspend fun requestPost(postModel: PostModel) {
 
         postFlow.emit(NetworkResponse.Loading())
         try {
             val response = apiService.addPost(postModel)
             if (response.isSuccessful) {
-                postFlow.emit(NetworkResponse.Success(true))
+                postFlow.emit(NetworkResponse.Success(response.body()!!))
                 Log.d("TAG", "requestPost success: ")
             } else {
                 Log.d("TAG", "requestPost Failed: ")

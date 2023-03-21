@@ -13,6 +13,7 @@ interface AppListener {
     }
 
     interface RequestPost {
+        fun getPostResponse():StateFlow<NetworkResponse<PostModel>>
        suspend fun requestPost(postModel: PostModel)
     }
 }

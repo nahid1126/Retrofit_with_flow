@@ -10,5 +10,5 @@ interface ApiService {
     suspend fun getPost(): Response<List<GetPostModel>>
 
     @POST("posts")
-    suspend fun addPost(@Body postModel: PostModel): Response<Boolean>
+    suspend fun addPost(@Body postModel: PostModel): Response<PostModel>
 }

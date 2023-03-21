@@ -21,7 +21,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         postRepository = PostRepository(apiService)
     }
 
-    fun addPost() = postRepository.postResponse
+    val postData = postRepository.getPostResponse()
 
     fun postRequest(postModel: PostModel) {
         viewModelScope.launch {
